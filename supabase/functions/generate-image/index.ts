@@ -30,14 +30,10 @@ serve(async (req) => {
     
     const hf = new HfInference(apiToken)
 
-    // Use a well-supported model for text-to-image generation
+    // Use a fully supported model for text-to-image generation
     const image = await hf.textToImage({
       inputs: prompt,
-      model: 'runwayml/stable-diffusion-v1-5',
-      parameters: {
-        guidance_scale: 7.5,
-        num_inference_steps: 30,
-      }
+      model: 'CompVis/stable-diffusion-v1-4',
     })
 
     // Convert the blob to a base64 string
