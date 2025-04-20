@@ -35,10 +35,11 @@ export class ImageGenerationService {
       console.log("Attempting to load Hugging Face model...");
       
       // Try to load the model with a timeout to prevent hanging
+      // Use wasm instead of webgpu since webgpu is not supported in this environment
       const modelPromise = pipeline(
         "text-generation",
         "distilgpt2", // Using a smaller, commonly available model
-        { device: "webgpu" }
+        { device: "wasm" } // Changed from webgpu to wasm
       );
       
       // Set a timeout for model loading
