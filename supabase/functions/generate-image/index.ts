@@ -30,10 +30,11 @@ serve(async (req) => {
     
     const hf = new HfInference(apiToken)
 
-    // Use a fully supported model for text-to-image generation
+    // Use a text-to-image model known to work with the Hugging Face inference API
+    // Kandinsky is one of the models specifically supported by the Hugging Face API
     const image = await hf.textToImage({
       inputs: prompt,
-      model: 'CompVis/stable-diffusion-v1-4',
+      model: 'kandinsky-community/kandinsky-2-1',
     })
 
     // Convert the blob to a base64 string
