@@ -30,17 +30,13 @@ serve(async (req) => {
     
     const hf = new HfInference(apiToken)
 
-    // Using julien-c/strawberry-aesthetic-mix which is widely supported by the HF API
-    console.log('Using model: julien-c/strawberry-aesthetic-mix')
+    // Using a model that's known to be supported by the Hugging Face Inference API
+    console.log('Using model: stabilityai/stable-diffusion-xl-base-1.0')
     
     try {
       const image = await hf.textToImage({
         inputs: prompt,
-        model: 'julien-c/strawberry-aesthetic-mix',
-        parameters: {
-          guidance_scale: 7.5,
-          num_inference_steps: 50,
-        }
+        model: 'stabilityai/stable-diffusion-xl-base-1.0',
       })
 
       // Convert the blob to a base64 string
@@ -57,11 +53,11 @@ serve(async (req) => {
       console.error('Specific model error:', modelError)
       
       // Fallback to a different model if the first one fails
-      console.log('Falling back to another model: prompthero/openjourney')
+      console.log('Falling back to another model: runwayml/stable-diffusion-v1-5')
       
       const fallbackImage = await hf.textToImage({
         inputs: prompt,
-        model: 'prompthero/openjourney',
+        model: 'runwayml/stable-diffusion-v1-5',
       })
       
       const fallbackArrayBuffer = await fallbackImage.arrayBuffer()
