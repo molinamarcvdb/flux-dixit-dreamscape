@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Slider } from '@/components/ui/slider';
 import { toast } from 'sonner';
 import { CardData } from '@/utils/imageUtils';
-import { runwareService } from '@/utils/runwareService';
+import { imageGenerationService } from '@/utils/imageGenerationService';
 
 interface CardEditorProps {
   card: CardData | null;
@@ -48,7 +48,7 @@ const CardEditor: React.FC<CardEditorProps> = ({ card, onClose, onSave, isOpen }
       
       toast.info('Regenerating card...');
       
-      const generatedImage = await runwareService.generateImage(params);
+      const generatedImage = await imageGenerationService.generateImage(params);
       
       if (!generatedImage.imageURL) {
         throw new Error('Failed to generate image');

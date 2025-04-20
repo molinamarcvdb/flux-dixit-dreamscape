@@ -6,6 +6,7 @@ export interface GenerateImageParams {
   positivePrompt: string;
   numberResults?: number;
   seed?: number | null;
+  CFGScale?: number;
 }
 
 export interface GeneratedImage {
@@ -19,8 +20,9 @@ export class ImageGenerationService {
   
   async initialize() {
     try {
+      // Use the proper pipeline type that's supported by HuggingFace transformers
       this.model = await pipeline(
-        "text-to-image",
+        "text-to-image", 
         "stabilityai/stable-diffusion-2", 
         { device: "webgpu" }
       );
@@ -39,9 +41,18 @@ export class ImageGenerationService {
 
     try {
       const seed = params.seed || Math.floor(Math.random() * 1000000000);
+      const cfgScale = params.CFGScale || 7.5; // Default CFG scale if not provided
+      
+      console.log("Generating image with params:", { 
+        prompt: params.positivePrompt, 
+        seed, 
+        cfgScale 
+      });
+      
       const image = await this.model(params.positivePrompt, {
         seed: seed,
         num_inference_steps: 20,
+        guidance_scale: cfgScale
       });
 
       // Convert the generated image to a URL
