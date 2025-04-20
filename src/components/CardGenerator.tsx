@@ -7,7 +7,7 @@ import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { runwareService, GeneratedImage } from '@/utils/runwareService';
+import { imageGenerationService, GeneratedImage } from '@/utils/imageGenerationService';
 import { CardData, createCardData } from '@/utils/imageUtils';
 
 interface CardGeneratorProps {
@@ -21,10 +21,8 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({
   isGenerating, 
   setIsGenerating 
 }) => {
-  const [apiKey, setApiKey] = useState('');
   const [prompt, setPrompt] = useState('');
   const [cardCount, setCardCount] = useState(3);
-  const [cfgScale, setCfgScale] = useState(1);
   
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -32,24 +30,15 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({
       return;
     }
     
-    if (!apiKey.trim()) {
-      toast.error('Please enter your Runware API key');
-      return;
-    }
-    
     try {
       setIsGenerating(true);
-      runwareService.setApiKey(apiKey);
-      
       toast.info(`Generating ${cardCount} Dixit cards...`);
       
       const params = {
         positivePrompt: prompt,
-        CFGScale: cfgScale,
-        model: "runware:100@1",
       };
       
-      const generatedImages = await runwareService.generateImages(params, cardCount);
+      const generatedImages = await imageGenerationService.generateImages(params, cardCount);
       
       if (generatedImages.length === 0) {
         toast.error('Failed to generate any images');
@@ -74,25 +63,10 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({
     <Card className="w-full bg-white dark:bg-gray-800 shadow-lg border-dixit-primary border-opacity-20">
       <CardHeader className="pb-4">
         <CardTitle className="text-2xl font-bold text-dixit-primary">Dixit Card Generator</CardTitle>
-        <CardDescription>Create your own dreamlike Dixit cards</CardDescription>
+        <CardDescription>Create your own dreamlike Dixit cards using AI</CardDescription>
       </CardHeader>
       
       <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="api-key">Runware API Key</Label>
-          <Input
-            id="api-key"
-            type="password"
-            placeholder="Enter your Runware API key"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            className="border-dixit-secondary"
-          />
-          <p className="text-xs text-muted-foreground">
-            Get your API key from <a href="https://runware.ai" target="_blank" rel="noopener noreferrer" className="text-dixit-primary hover:underline">Runware.ai</a>
-          </p>
-        </div>
-        
         <div className="space-y-2">
           <Label htmlFor="prompt">Card Prompt</Label>
           <Textarea
@@ -117,24 +91,6 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({
             onValueChange={(value) => setCardCount(value[0])}
             className="py-4"
           />
-        </div>
-        
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <Label htmlFor="cfg-scale">Creativity Level: {cfgScale.toFixed(1)}</Label>
-          </div>
-          <Slider
-            id="cfg-scale"
-            min={0.5}
-            max={2}
-            step={0.1}
-            value={[cfgScale]}
-            onValueChange={(value) => setCfgScale(value[0])}
-            className="py-4"
-          />
-          <p className="text-xs text-muted-foreground">
-            Lower values create more creative, imaginative results
-          </p>
         </div>
       </CardContent>
       
