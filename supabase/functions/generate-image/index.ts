@@ -30,10 +30,10 @@ serve(async (req) => {
     
     const hf = new HfInference(apiToken)
 
-    // Use a simpler model that requires less permissions
+    // Use a well-supported model for text-to-image generation
     const image = await hf.textToImage({
       inputs: prompt,
-      model: 'stabilityai/stable-diffusion-2',
+      model: 'runwayml/stable-diffusion-v1-5',
       parameters: {
         guidance_scale: 7.5,
         num_inference_steps: 30,
