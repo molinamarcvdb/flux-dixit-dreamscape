@@ -22,14 +22,21 @@ serve(async (req) => {
 
     console.log('Generating image with prompt:', prompt)
     
-    const hf = new HfInference(Deno.env.get('HUGGING_FACE_ACCESS_TOKEN'))
+    // Get the API token from environment variables
+    const apiToken = Deno.env.get('HUGGING_FACE_ACCESS_TOKEN')
+    if (!apiToken) {
+      throw new Error('HUGGING_FACE_ACCESS_TOKEN is not set')
+    }
+    
+    const hf = new HfInference(apiToken)
 
+    // Use a simpler model that requires less permissions
     const image = await hf.textToImage({
       inputs: prompt,
-      model: 'black-forest-labs/FLUX.1-schnell',
+      model: 'stabilityai/stable-diffusion-2',
       parameters: {
         guidance_scale: 7.5,
-        num_inference_steps: 50,
+        num_inference_steps: 30,
       }
     })
 
