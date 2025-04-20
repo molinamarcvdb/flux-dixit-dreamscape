@@ -40,7 +40,8 @@ export class RunwareService {
     }
     
     try {
-      const requestData = [
+      // Create the basic request structure
+      const requestData: any[] = [
         {
           taskType: "authentication",
           apiKey: this.apiKey
@@ -62,7 +63,7 @@ export class RunwareService {
         }
       ];
 
-      // Remove seed if not provided
+      // Add seed if provided - now adding it directly to the second object in the array
       if (params.seed) {
         requestData[1].seed = params.seed;
       }
