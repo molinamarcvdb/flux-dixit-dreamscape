@@ -30,23 +30,50 @@ serve(async (req) => {
     
     const hf = new HfInference(apiToken)
 
-    // Use a text-to-image model known to work with the Hugging Face inference API
-    // Kandinsky is one of the models specifically supported by the Hugging Face API
-    const image = await hf.textToImage({
-      inputs: prompt,
-      model: 'kandinsky-community/kandinsky-2-1',
-    })
-
-    // Convert the blob to a base64 string
-    const arrayBuffer = await image.arrayBuffer()
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
+    // Using julien-c/strawberry-aesthetic-mix which is widely supported by the HF API
+    console.log('Using model: julien-c/strawberry-aesthetic-mix')
     
-    console.log('Image generated successfully')
+    try {
+      const image = await hf.textToImage({
+        inputs: prompt,
+        model: 'julien-c/strawberry-aesthetic-mix',
+        parameters: {
+          guidance_scale: 7.5,
+          num_inference_steps: 50,
+        }
+      })
 
-    return new Response(
-      JSON.stringify({ imageURL: `data:image/png;base64,${base64}` }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+      // Convert the blob to a base64 string
+      const arrayBuffer = await image.arrayBuffer()
+      const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
+      
+      console.log('Image generated successfully')
+
+      return new Response(
+        JSON.stringify({ imageURL: `data:image/png;base64,${base64}` }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    } catch (modelError) {
+      console.error('Specific model error:', modelError)
+      
+      // Fallback to a different model if the first one fails
+      console.log('Falling back to another model: prompthero/openjourney')
+      
+      const fallbackImage = await hf.textToImage({
+        inputs: prompt,
+        model: 'prompthero/openjourney',
+      })
+      
+      const fallbackArrayBuffer = await fallbackImage.arrayBuffer()
+      const fallbackBase64 = btoa(String.fromCharCode(...new Uint8Array(fallbackArrayBuffer)))
+      
+      console.log('Fallback image generated successfully')
+      
+      return new Response(
+        JSON.stringify({ imageURL: `data:image/png;base64,${fallbackBase64}` }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
   } catch (error) {
     console.error('Error generating image:', error)
     return new Response(
