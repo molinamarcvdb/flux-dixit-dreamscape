@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
+    "@huggingface/inference": "^3.11.0",
     "@huggingface/transformers": "^3.5.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
@@ -46,6 +47,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
+    "dotenv": "^16.5.0",
     "embla-carousel-react": "^8.3.0",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.462.0",
